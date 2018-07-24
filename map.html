@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- include leaflet css folder -->
+    <link rel="stylesheet" href="lib/leaflet/leaflet.css">
+    <!-- include leaflet javasript file -->
+    <script src="lib/leaflet/leaflet.js"></script>
+    <!-- include the mapdata or shape file  -->
+    <script src="data/countries.geojson"></script>
+    <script src="data/maxico.geojson"></script>
+    <script src="data/southindia.geojson"></script>
+    <!-- import india river shap file  -->
+    <script src="data/india_river.geojson"></script>
+    <style>
+        #map {height: 620px;}
+    </style>
+    <title>Google Map</title>
+</head>
+<body>
+    
+        <div id="map"></div>
+        <script>
+            
+            var map = L.map('map').setView([20.5937, 78.9629], 10);  
+             var indiaLayer = L.geoJson(india).addTo(map);
+            var countryLayer = L.geoJson(countries).addTo(map);
+            var maxicolayer = L.geoJson(maxico).addTo(map);
+            var riverLayer = L.geoJson(indiaRiver).addTo(map);    
+            // fix the size of map
+            map.fitBounds(countryLayer.getBounds());
+        </script>
+
+</body>
+</html>

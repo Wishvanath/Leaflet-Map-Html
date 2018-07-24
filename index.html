@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title> Leaflet Map Practice </title>
+    <!-- include leaflet css folder -->
+    <link rel="stylesheet" href="lib/leaflet/leaflet.css">
+    <!-- include leaflet javasript file -->
+    <script src="lib/leaflet/leaflet.js"></script>
+    <!-- include the mapdata or shape file  -->
+    <script src="data/countries.geojson"></script>
+    <script src="data/southindia.geojson"></script>
+    <!-- define the style -->
+    <style>
+        #map{
+            height: 500px;
+            width: 100%;
+            
+        }
+        .legend{
+            background-color:rgb(8, 104, 104);
+            line-height: 1.5em;
+            padding: 10px;
+            color: white;    
+        }
+        legend ,i{
+            width: 5em;
+            float: left;
+            
+        }
+        .mr_image img{
+            width: 100%;
+        }
+    </style>
+
+</head>
+<body>
+    <h1>Leaflet Map</h1>
+    <div id ="map"></div>
+    <script>
+        // create a color function based on the population
+        function getcountryColor(popEst){
+            if(popEst >100000000){
+                return 'red';
+            }
+            else if(popEst >5000000){
+                return 'blue';
+
+            }
+            else{
+                return 'green';
+            }
+        }
+
+        // to style the countries map
+        function countriesStyle(feature){
+            return{
+                fillColor:getcountryColor(feature.properties.POP_EST),
+                weight:'2',
+                opacity:1,
+                color:'white',
+                dashArray:'3',
+                fillOpacity:'0.8'
+            }
+        }
+        var mymap = L.map('map').setView([20.5937, 78.9629], 10);
+        var countriesLayer = L.geoJson(
+            countries,
+            {style:countriesStyle}
+            ).addTo(mymap)
+        // var indiaLayer = L.geoJson(india).addTo(mymap);
+        
+        // to fit the map into the screen
+        mymap.fitBounds(countriesLayer.getBounds());
+        // add legends to the map
+        var legend = L.control({position:'bottomright'});
+        legend.onAdd = function(mymap){
+            var div = L.DomUtil.create('div','legend');
+            var labels = [
+                "Population greater than 100000000",
+                "Population greater than 50000000",
+                "Population equal or less than 50000000"
+            ];
+            var grades = [100000001, 50000001, 5000000];
+            div.innerHTML = '<div><b>Legend</b></div>';
+            for(var i =0; i< grades.length; i++){
+                div.innerHTML += '<i style="background:' + getcountryColor(grades[i]) + '">&nbsp;&nbsp;</i>'+'&nbsp;&nbsp'
+                + labels[i] +'<br/><br/>';
+            }
+            return div;
+
+        }
+        legend.addTo(mymap);
+
+        // add the marker
+        var indiamarker = [20.5937,78.9629];
+        var marker = L.marker(indiamarker).addTo(mymap);
+        // create a circle marker
+        var circle = L.circle(
+            indiamarker,
+            100000,
+            {
+                color:'purple',
+                fillColor:'red',
+                fillOpacity:0.8
+            }
+        ).addTo(mymap)
+
+        // create a specific icon
+        var greenIcon = L.icon({
+            iconUrl: 'http://leafletjs.com/docs/images/leaf-green.png',
+            shadowUrl: 'http://leafletjs.com/docs/images/leaf-shadow.png',
+
+            iconSize:     [38, 95], // size of the icon
+            shadowSize:   [50, 64], // size of the shadow
+            iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+            shadowAnchor: [4, 62],  // the same for the shadow
+            popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+        });
+        var marker = L.marker([43.866667,18.416667], {icon: greenIcon}).addTo(mymap);
+        
+        // create a pop marker with some details and will display some images
+        var point = [43.866667,18.416667];
+        var myMarker = L.marker(point);
+        myMarker.addTo(mymap);
+        myMarker.bindPopup(
+            '<b>New Delhi <div class="mr_image"><img src="img/idiagate.jpg"> </div></b>',
+            {minWidth:200,marginTop:50}
+        )
+    </script>
+    
+</body>
+</html>
